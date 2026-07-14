@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bitácora Legal - Kitchen Center</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { color: #1f73e6; margin-bottom: 20px; }
+    .form-section { background: #fafafa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e0e0e0; }
+    .form-section h2 { font-size: 16px; margin-bottom: 10px; color: #333; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .form-grid.full { grid-template-columns: 1fr; }
+    input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: Arial; font-size: 14px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #1f73e6; box-shadow: 0 0 0 2px rgba(31, 115, 230, 0.1); }
+    textarea { resize: vertical; min-height: 80px; }
+    .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+    button { background: #1f73e6; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: 500; }
+    button:hover { background: #1765cc; }
+    .btn-secondary { background: #666; }
+    .btn-secondary:hover { background: #555; }
+    .btn-danger { background: #d32f2f; }
+    .btn-danger:hover { background: #b71c1c; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; text-align: center; }
+    .stat-label { font-size: 12px; color: #666; margin-bottom: 5px; }
+    .stat-value { font-size: 28px; font-weight: bold; color: #1f73e6; }
+    .task-card { border-left: 3px solid #1f73e6; padding: 12px; margin-bottom: 12px; background: white; border: 1px solid #e0e0e0; border-radius: 4px; }
+    .task-card.urgent { border-left-color: #d32f2f; }
+    .task-card.high { border-left-color: #f57c00; }
+    .task-title { font-weight: bold; color: #333; margin-bottom: 5px; }
+    .task-meta { font-size: 12px; color: #666; margin-bottom: 8px; }
+    .task-badge { display: inline-block; background: #e8f0fe; color: #1f73e6; padding: 3px 8px; border-radius: 3px; font-size: 11px; margin-right: 8px; }
+    .task-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .btn-small { background: #e8f0fe; color: #1f73e6; border: 1px solid #1f73e6; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .btn-small:hover { background: #d2e3fc; }
+    .alert { padding: 12px; margin-bottom: 12px; border-radius: 4px; }
+    .alert.success { background: #e6f4ea; color: #137333; border: 1px solid #34a853; }
+    .alert.error { background: #fce8e6; color: #c5221f; border: 1px solid #f28482; }
+    .empty-state { text-align: center; padding: 20px; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📋 Bitácora Legal - Kitchen Center</h1>
+    
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total tareas</div>
+        <div class="stat-value" id="statTotal">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Vencidas</div>
+        <div class="stat-value" id="statOverdue" style="color: #d32f2f;">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">En progreso</div>
+        <div class="stat-value" id="statProgress">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Completadas</div>
+        <div class="stat-value" id="statDone" style="color: #137333;">0</div>
+      </div>
+    </div>
+    
+    <div id="alertContainer"></div>
+    
+    <div class="form-section">
+      <h2>Registrar nueva tarea</h2>
+      <div class="form-grid">
+        <div>
+          <label>Descripción *</label>
+          <input type="text" id="description" placeholder="Ej: Revisión contrato Outlet La Fábrica">
+        </div>
+        <div>
+          <label>Tipo *</label>
+          <select id="type">
+            <option value="">Selecciona tipo</option>
+            <option value="Contrato">Contrato</option>
+            <option value="Patente">Patente</option>
+            <option value="Litigio">Litigio</option>
+            <option value="Ley 21.719">Ley 21.719</option>
+            <option value="Cx">Customer Experience</option>
+            <option value="Laboral">Laboral</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-grid">
+        <div>
+          <label>Estado actual *</label>
+          <select id="status">
+            <option value="">Selecciona estado</option>
+            <option value="En revisión">En revisión</option>
+            <option value="Pendiente respuesta">Pendiente respuesta</option>
+            <option value="Documento solicitado">Documento solicitado</option>
+            <option value="Completado">Completado</option>
+          </select>
+        </div>
+        <div>
+          <label>Destinatario del siguiente paso</label>
+          <input type="text" id="assignee" placeholder="Ej: Comercial, Arquitecta, RRHH">
+        </div>
+      </div>
+      
+      <div class="form-grid">
+        <div>
+          <label>Criticidad</label>
+          <select id="criticality">
+            <option value="normal">Normal</option>
+            <option value="high">Alta</option>
+            <option value="urgent">Urgente</option>
+          </select>
+        </div>
+        <div>
+          <label>Seguimiento cada (días)</label>
+          <input type="number" id="followupDays" value="2" min="1">
+        </div>
+      </div>
+      
+      <div class="form-grid full">
+        <div>
+          <label>Notas adicionales</label>
+          <textarea id="notes" placeholder="Información relevante para el seguimiento"></textarea>
+        </div>
+      </div>
+      
+      <div class="btn-group">
+        <button onclick="addTask()">+ Agregar tarea</button>
+        <button class="btn-secondary" onclick="clearForm()">Limpiar</button>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h2>Tareas registradas</h2>
+      <div id="taskList"></div>
+    </div>
+  </div>
+
+  <script>
+    const tasks = JSON.parse(localStorage.getItem('legalTasks') || '[]');
+    
+    function calculateDaysSince(createdDate) {
+      const now = new Date();
+      const created = new Date(createdDate);
+      return Math.floor((now - created) / (1000 * 60 * 60 * 24));
+    }
+    
+    function isOverdue(task) {
+      return calculateDaysSince(task.createdDate) > task.followupDays;
+    }
+    
+    function updateStats() {
+      const total = tasks.length;
+      const overdue = tasks.filter(isOverdue).length;
+      const progress = tasks.filter(t => t.status === 'En revisión').length;
+      const done = tasks.filter(t => t.status === 'Completado').length;
+      
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statOverdue').textContent = overdue;
+      document.getElementById('statProgress').textContent = progress;
+      document.getElementById('statDone').textContent = done;
+    }
+    
+    function renderTasks() {
+      const list = document.getElementById('taskList');
+      if (tasks.length === 0) {
+        list.innerHTML = '<div class="empty-state">No hay tareas registradas. Comienza agregando una nueva.</div>';
+        updateStats();
+        return;
+      }
+      
+      list.innerHTML = tasks.map((task, idx) => {
+        const daysSince = calculateDaysSince(task.createdDate);
+        const overdue = daysSince > task.followupDays;
+        
+        return `
+          <div class="task-card ${task.criticality}">
+            <div class="task-title">${task.description}</div>
+            <div class="task-meta">
+              <span class="task-badge">${task.type}</span>
+              <span class="task-badge">${task.status}</span>
+              <span class="task-badge">👤 ${task.assignee || 'Sin asignar'}</span>
+              ${overdue ? `<span class="task-badge" style="background: #fce8e6; color: #c5221f;">⚠️ ${daysSince} días vencido</span>` : `<span style="font-size: 12px; color: #666;">${daysSince} días desde registro</span>`}
+            </div>
+            ${task.notes ? `<div class="task-meta" style="margin-top: 8px;">${task.notes}</div>` : ''}
+            <div class="task-actions">
+              <button class="btn-small" onclick="updateTask(${idx})">Actualizar</button>
+              <button class="btn-small" style="background: #fce8e6; color: #c5221f; border-color: #f28482;" onclick="deleteTask(${idx})">Eliminar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      updateStats();
+    }
+    
+    function addTask() {
+      const description = document.getElementById('description').value.trim();
+      const type = document.getElementById('type').value;
+      const status = document.getElementById('status').value;
+      const assignee = document.getElementById('assignee').value.trim();
+      const criticality = document.getElementById('criticality').value;
+      const followupDays = parseInt(document.getElementById('followupDays').value) || 2;
+      const notes = document.getElementById('notes').value.trim();
+      
+      if (!description || !type || !status) {
+        showAlert('Completa descripción, tipo y estado', 'error');
+        return;
+      }
+      
+      tasks.push({
+        id: Date.now(),
+        description,
+        type,
+        status,
+        assignee,
+        criticality,
+        followupDays,
+        notes,
+        createdDate: new Date().toISOString()
+      });
+      
+      localStorage.setItem('legalTasks', JSON.stringify(tasks));
+      showAlert(`✓ Tarea "${description}" registrada`, 'success');
+      clearForm();
+      renderTasks();
+    }
+    
+    function updateTask(idx) {
+      const newStatus = prompt('Nuevo estado:', tasks[idx].status);
+      if (newStatus) {
+        tasks[idx].status = newStatus;
+        localStorage.setItem('legalTasks', JSON.stringify(tasks));
+        renderTasks();
+      }
+    }
+    
+    function deleteTask(idx) {
+      if (confirm('¿Eliminar esta tarea?')) {
+        tasks.splice(idx, 1);
+        localStorage.setItem('legalTasks', JSON.stringify(tasks));
+        renderTasks();
+      }
+    }
+    
+    function clearForm() {
+      document.getElementById('description').value = '';
+      document.getElementById('type').value = '';
+      document.getElementById('status').value = '';
+      document.getElementById('assignee').value = '';
+      document.getElementById('criticality').value = 'normal';
+      document.getElementById('followupDays').value = '2';
+      document.getElementById('notes').value = '';
+    }
+    
+    function showAlert(message, type) {
+      const container = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = `alert ${type}`;
+      alert.textContent = message;
+      container.appendChild(alert);
+      setTimeout(() => alert.remove(), 4000);
+    }
+    
+    renderTasks();
+  </script>
+</body>
+</html>

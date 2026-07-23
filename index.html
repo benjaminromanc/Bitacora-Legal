@@ -7,39 +7,59 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; padding: 20px; }
-    .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     h1 { color: #1f73e6; margin-bottom: 20px; }
     .form-section { background: #fafafa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e0e0e0; }
     .form-section h2 { font-size: 16px; margin-bottom: 10px; color: #333; }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
     .form-grid.full { grid-template-columns: 1fr; }
+    .form-grid.triple { grid-template-columns: 1fr 1fr 1fr; }
     input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: Arial; font-size: 14px; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: #1f73e6; box-shadow: 0 0 0 2px rgba(31, 115, 230, 0.1); }
     textarea { resize: vertical; min-height: 80px; }
     .btn-group { display: flex; gap: 8px; margin-top: 10px; }
     button { background: #1f73e6; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: 500; }
     button:hover { background: #1765cc; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
     .btn-secondary { background: #666; }
     .btn-secondary:hover { background: #555; }
     .btn-danger { background: #d32f2f; }
     .btn-danger:hover { background: #b71c1c; }
     .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-    .stat-card { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; text-align: center; }
-    .stat-label { font-size: 12px; color: #666; margin-bottom: 5px; }
+    .stat-card { background: linear-gradient(135deg, #fafafa, #f0f0f0); border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; text-align: center; }
+    .stat-label { font-size: 12px; color: #666; margin-bottom: 5px; text-transform: uppercase; }
     .stat-value { font-size: 28px; font-weight: bold; color: #1f73e6; }
     .task-card { border-left: 3px solid #1f73e6; padding: 12px; margin-bottom: 12px; background: white; border: 1px solid #e0e0e0; border-radius: 4px; }
     .task-card.urgent { border-left-color: #d32f2f; }
-    .task-card.high { border-left-color: #f57c00; }
+    .task-card.alta { border-left-color: #f57c00; }
+    .task-card.normal { border-left-color: #4caf50; }
     .task-title { font-weight: bold; color: #333; margin-bottom: 5px; }
     .task-meta { font-size: 12px; color: #666; margin-bottom: 8px; }
-    .task-badge { display: inline-block; background: #e8f0fe; color: #1f73e6; padding: 3px 8px; border-radius: 3px; font-size: 11px; margin-right: 8px; }
+    .task-badge { display: inline-block; background: #e8f0fe; color: #1f73e6; padding: 3px 8px; border-radius: 3px; font-size: 11px; margin-right: 8px; margin-bottom: 4px; }
+    .task-badge.urgente { background: #fce8e6; color: #d32f2f; }
+    .task-badge.alta { background: #fff3cd; color: #f57c00; }
     .task-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     .btn-small { background: #e8f0fe; color: #1f73e6; border: 1px solid #1f73e6; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
     .btn-small:hover { background: #d2e3fc; }
     .alert { padding: 12px; margin-bottom: 12px; border-radius: 4px; }
     .alert.success { background: #e6f4ea; color: #137333; border: 1px solid #34a853; }
     .alert.error { background: #fce8e6; color: #c5221f; border: 1px solid #f28482; }
+    .alert.info { background: #e8f0fe; color: #1f73e6; border: 1px solid #1f73e6; }
     .empty-state { text-align: center; padding: 20px; color: #999; }
+    .loading { text-align: center; padding: 20px; color: #999; }
+    .spinner { display: inline-block; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); }
+    .modal.active { display: block; }
+    .modal-content { background-color: white; margin: 5% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+    .close-modal { float: right; font-size: 28px; font-weight: bold; cursor: pointer; color: #aaa; }
+    .close-modal:hover { color: #000; }
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+    .filter-btn { background: #e8f0fe; color: #1f73e6; border: 1px solid #1f73e6; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .filter-btn.active { background: #1f73e6; color: white; }
+    .kpi-box { background: #f0f7ff; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 13px; }
+    .sync-status { position: fixed; bottom: 20px; right: 20px; background: #4caf50; color: white; padding: 10px 15px; border-radius: 4px; font-size: 12px; }
   </style>
 </head>
 <body>
@@ -52,221 +72,421 @@
         <div class="stat-value" id="statTotal">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Vencidas</div>
-        <div class="stat-value" id="statOverdue" style="color: #d32f2f;">0</div>
+        <div class="stat-label">En progreso</div>
+        <div class="stat-value" id="statProgress" style="color: #f57c00;">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">En progreso</div>
-        <div class="stat-value" id="statProgress">0</div>
+        <div class="stat-label">Pendientes</div>
+        <div class="stat-value" id="statPending" style="color: #d32f2f;">0</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Completadas</div>
-        <div class="stat-value" id="statDone" style="color: #137333;">0</div>
+        <div class="stat-value" id="statDone" style="color: #4caf50;">0</div>
       </div>
     </div>
     
     <div id="alertContainer"></div>
     
     <div class="form-section">
-      <h2>Registrar nueva tarea</h2>
+      <h2>➕ Registrar nueva tarea</h2>
       <div class="form-grid">
         <div>
           <label>Descripción *</label>
           <input type="text" id="description" placeholder="Ej: Revisión contrato Outlet La Fábrica">
         </div>
         <div>
-          <label>Tipo *</label>
-          <select id="type">
-            <option value="">Selecciona tipo</option>
-            <option value="Contrato">Contrato</option>
-            <option value="Patente">Patente</option>
-            <option value="Litigio">Litigio</option>
-            <option value="Ley 21.719">Ley 21.719</option>
-            <option value="Cx">Customer Experience</option>
-            <option value="Laboral">Laboral</option>
-            <option value="Otro">Otro</option>
-          </select>
+          <label>Solicitante *</label>
+          <input type="text" id="solicitante" placeholder="Ej: KAM Comercial, Funcionario, etc.">
         </div>
       </div>
       
       <div class="form-grid">
         <div>
-          <label>Estado actual *</label>
-          <select id="status">
+          <label>Materia *</label>
+          <select id="materia">
+            <option value="">Selecciona materia</option>
+            <option value="Contrato">Contrato</option>
+            <option value="Patente">Patente</option>
+            <option value="Laboral">Laboral</option>
+            <option value="Consumidor">Consumidor</option>
+            <option value="Arriendamientos">Arriendamientos</option>
+            <option value="21.719">Ley 21.719</option>
+            <option value="Internacional">Internacional</option>
+            <option value="Familia/Pensiones">Familia/Pensiones</option>
+            <option value="Judicial">Judicial</option>
+            <option value="Gestiones varias">Gestiones varias</option>
+          </select>
+        </div>
+        <div>
+          <label>Estado *</label>
+          <select id="estado">
             <option value="">Selecciona estado</option>
             <option value="En revisión">En revisión</option>
             <option value="Pendiente respuesta">Pendiente respuesta</option>
             <option value="Documento solicitado">Documento solicitado</option>
             <option value="Completado">Completado</option>
+            <option value="En espera">En espera</option>
+            <option value="Rechazado">Rechazado</option>
           </select>
-        </div>
-        <div>
-          <label>Destinatario del siguiente paso</label>
-          <input type="text" id="assignee" placeholder="Ej: Comercial, Arquitecta, RRHH">
         </div>
       </div>
       
       <div class="form-grid">
         <div>
           <label>Criticidad</label>
-          <select id="criticality">
-            <option value="normal">Normal</option>
-            <option value="high">Alta</option>
-            <option value="urgent">Urgente</option>
+          <select id="criticidad">
+            <option value="Normal">Normal</option>
+            <option value="Alta">Alta</option>
+            <option value="Urgente">Urgente</option>
           </select>
         </div>
         <div>
-          <label>Seguimiento cada (días)</label>
-          <input type="number" id="followupDays" value="2" min="1">
+          <label>Destinatario siguiente paso</label>
+          <input type="text" id="destinatario" placeholder="Ej: KAM, Funcionario, Cliente">
+        </div>
+        <div>
+          <label>Seguimiento (días)</label>
+          <input type="number" id="seguimientoDias" value="2" min="1">
         </div>
       </div>
       
       <div class="form-grid full">
         <div>
           <label>Notas adicionales</label>
-          <textarea id="notes" placeholder="Información relevante para el seguimiento"></textarea>
+          <textarea id="notas" placeholder="Información relevante para el seguimiento"></textarea>
+        </div>
+      </div>
+      
+      <div class="form-grid full">
+        <div>
+          <label>Fecha SLA (opcional)</label>
+          <input type="date" id="fechaSLA">
         </div>
       </div>
       
       <div class="btn-group">
-        <button onclick="addTask()">+ Agregar tarea</button>
-        <button class="btn-secondary" onclick="clearForm()">Limpiar</button>
+        <button id="btnAgregar" onclick="agregarTarea()">+ Agregar tarea</button>
+        <button class="btn-secondary" onclick="limpiarForm()">Limpiar</button>
       </div>
     </div>
     
     <div class="form-section">
-      <h2>Tareas registradas</h2>
+      <h2>📊 Tareas registradas</h2>
+      
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filtrarPor('todas')">Todas</button>
+        <button class="filter-btn" onclick="filtrarPor('En revisión')">En revisión</button>
+        <button class="filter-btn" onclick="filtrarPor('Pendiente respuesta')">Pendiente</button>
+        <button class="filter-btn" onclick="filtrarPor('Completado')">Completadas</button>
+      </div>
+      
       <div id="taskList"></div>
+      
+      <div class="kpi-box">
+        <strong>KPI Rápido:</strong> Tareas completadas esta semana: <span id="kpiSemanal">0</span> | 
+        Tiempo promedio de ciclo: <span id="kpiPromedio">-</span> días
+      </div>
     </div>
+  </div>
+  
+  <!-- Modal para editar tarea -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="cerrarModal()">&times;</span>
+      <div class="modal-header">Actualizar tarea</div>
+      <input type="hidden" id="editIdCaso">
+      <div class="form-grid full">
+        <div>
+          <label>Estado</label>
+          <select id="editEstado">
+            <option value="En revisión">En revisión</option>
+            <option value="Pendiente respuesta">Pendiente respuesta</option>
+            <option value="Documento solicitado">Documento solicitado</option>
+            <option value="Completado">Completado</option>
+            <option value="En espera">En espera</option>
+            <option value="Rechazado">Rechazado</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div>
+          <label>Notas</label>
+          <textarea id="editNotas"></textarea>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button onclick="guardarActualizacion()">Guardar</button>
+        <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="syncStatus" class="sync-status" style="display: none;">
+    ↻ Sincronizando...
   </div>
 
   <script>
-    const tasks = JSON.parse(localStorage.getItem('legalTasks') || '[]');
+    const SCRIPT_URL = "https://script.google.com/a/macros/kitchencenter.cl/s/AKfycbzJyygStFyL23lfwxjYImbemqMHDmWxEXgEP2sqwYX9FTBanN9UNYJy487NZmWhr5jjvw/exec";
+    let tareas = [];
+    let filtroActual = "todas";
     
-    function calculateDaysSince(createdDate) {
-      const now = new Date();
-      const created = new Date(createdDate);
-      return Math.floor((now - created) / (1000 * 60 * 60 * 24));
+    async function cargarTareas() {
+      try {
+        mostrarSincronizacion(true);
+        const response = await fetch(`${SCRIPT_URL}?action=list`);
+        const data = await response.json();
+        
+        tareas = data;
+        renderizarTareas();
+        actualizarStats();
+        mostrarAlerta("✅ Tareas cargadas desde Google Sheets", "success");
+      } catch (err) {
+        mostrarAlerta(`❌ Error al cargar tareas: ${err.message}`, "error");
+        console.error(err);
+      } finally {
+        mostrarSincronizacion(false);
+      }
     }
     
-    function isOverdue(task) {
-      return calculateDaysSince(task.createdDate) > task.followupDays;
-    }
-    
-    function updateStats() {
-      const total = tasks.length;
-      const overdue = tasks.filter(isOverdue).length;
-      const progress = tasks.filter(t => t.status === 'En revisión').length;
-      const done = tasks.filter(t => t.status === 'Completado').length;
+    async function agregarTarea() {
+      const descripcion = document.getElementById("description").value.trim();
+      const solicitante = document.getElementById("solicitante").value.trim();
+      const materia = document.getElementById("materia").value;
+      const estado = document.getElementById("estado").value;
+      const criticidad = document.getElementById("criticidad").value;
+      const destinatario = document.getElementById("destinatario").value.trim();
+      const seguimientoDias = parseInt(document.getElementById("seguimientoDias").value) || 2;
+      const notas = document.getElementById("notas").value.trim();
+      const fechaSLA = document.getElementById("fechaSLA").value || "";
       
-      document.getElementById('statTotal').textContent = total;
-      document.getElementById('statOverdue').textContent = overdue;
-      document.getElementById('statProgress').textContent = progress;
-      document.getElementById('statDone').textContent = done;
-    }
-    
-    function renderTasks() {
-      const list = document.getElementById('taskList');
-      if (tasks.length === 0) {
-        list.innerHTML = '<div class="empty-state">No hay tareas registradas. Comienza agregando una nueva.</div>';
-        updateStats();
+      if (!descripcion || !solicitante || !materia || !estado) {
+        mostrarAlerta("❌ Completa: Descripción, Solicitante, Materia y Estado", "error");
         return;
       }
       
-      list.innerHTML = tasks.map((task, idx) => {
-        const daysSince = calculateDaysSince(task.createdDate);
-        const overdue = daysSince > task.followupDays;
+      const nuevaTarea = {
+        descripcion,
+        solicitante,
+        materia,
+        estado,
+        criticidad,
+        destinatario,
+        seguimientoDias,
+        notas,
+        fechaSLA
+      };
+      
+      try {
+        document.getElementById("btnAgregar").disabled = true;
+        mostrarSincronizacion(true);
+        
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "addTask",
+            task: nuevaTarea
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          mostrarAlerta(`✅ ${result.message}`, "success");
+          limpiarForm();
+          cargarTareas();
+        } else {
+          mostrarAlerta(`❌ Error: ${result.error}`, "error");
+        }
+      } catch (err) {
+        mostrarAlerta(`❌ Error al guardar: ${err.message}`, "error");
+        console.error(err);
+      } finally {
+        document.getElementById("btnAgregar").disabled = false;
+        mostrarSincronizacion(false);
+      }
+    }
+    
+    async function actualizarTarea(idCaso) {
+      const tarea = tareas.find(t => t.ID_Caso === idCaso);
+      if (!tarea) return;
+      
+      document.getElementById("editIdCaso").value = idCaso;
+      document.getElementById("editEstado").value = tarea.Estado;
+      document.getElementById("editNotas").value = tarea.Notas;
+      document.getElementById("editModal").classList.add("active");
+    }
+    
+    async function guardarActualizacion() {
+      const idCaso = document.getElementById("editIdCaso").value;
+      const nuevoEstado = document.getElementById("editEstado").value;
+      const nuevoNotas = document.getElementById("editNotas").value;
+      
+      try {
+        mostrarSincronizacion(true);
+        
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "updateTask",
+            id: idCaso,
+            updates: {
+              Estado: nuevoEstado,
+              Notas: nuevoNotas
+            }
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          mostrarAlerta("✅ Tarea actualizada", "success");
+          cerrarModal();
+          cargarTareas();
+        } else {
+          mostrarAlerta(`❌ Error: ${result.error}`, "error");
+        }
+      } catch (err) {
+        mostrarAlerta(`❌ Error: ${err.message}`, "error");
+      } finally {
+        mostrarSincronizacion(false);
+      }
+    }
+    
+    function renderizarTareas() {
+      const list = document.getElementById("taskList");
+      const tareasFiltradas = filtroActual === "todas" 
+        ? tareas 
+        : tareas.filter(t => t.Estado === filtroActual);
+      
+      if (tareasFiltradas.length === 0) {
+        list.innerHTML = '<div class="empty-state">No hay tareas. Comienza creando una nueva.</div>';
+        return;
+      }
+      
+      list.innerHTML = tareasFiltradas.map(tarea => {
+        const claseCriticidad = tarea.Criticidad.toLowerCase();
+        const fechaCreacion = new Date(tarea.Timestamp);
+        const hoy = new Date();
+        const diasDesde = Math.floor((hoy - fechaCreacion) / (1000 * 60 * 60 * 24));
         
         return `
-          <div class="task-card ${task.criticality}">
-            <div class="task-title">${task.description}</div>
-            <div class="task-meta">
-              <span class="task-badge">${task.type}</span>
-              <span class="task-badge">${task.status}</span>
-              <span class="task-badge">👤 ${task.assignee || 'Sin asignar'}</span>
-              ${overdue ? `<span class="task-badge" style="background: #fce8e6; color: #c5221f;">⚠️ ${daysSince} días vencido</span>` : `<span style="font-size: 12px; color: #666;">${daysSince} días desde registro</span>`}
+          <div class="task-card ${claseCriticidad}">
+            <div class="task-title">
+              ${tarea.ID_Caso} - ${tarea.Descripcion}
             </div>
-            ${task.notes ? `<div class="task-meta" style="margin-top: 8px;">${task.notes}</div>` : ''}
+            <div class="task-meta">
+              <span class="task-badge ${claseCriticidad === 'urgente' ? 'urgente' : claseCriticidad === 'alta' ? 'alta' : ''}">${tarea.Criticidad}</span>
+              <span class="task-badge">${tarea.Materia}</span>
+              <span class="task-badge">${tarea.Estado}</span>
+            </div>
+            <div class="task-meta">
+              👤 Solicitante: ${tarea.Solicitante} | 
+              📍 Destinatario: ${tarea.Destinatario_Siguiente_Paso || "Mía"} | 
+              📅 ${diasDesde}d desde creación
+            </div>
+            ${tarea.Notas ? `<div class="task-meta" style="margin-top: 8px; font-style: italic; color: #555;">📝 ${tarea.Notas}</div>` : ''}
             <div class="task-actions">
-              <button class="btn-small" onclick="updateTask(${idx})">Actualizar</button>
-              <button class="btn-small" style="background: #fce8e6; color: #c5221f; border-color: #f28482;" onclick="deleteTask(${idx})">Eliminar</button>
+              <button class="btn-small" onclick="actualizarTarea('${tarea.ID_Caso}')">Actualizar</button>
+              <button class="btn-small" style="background: #fce8e6; color: #c5221f; border-color: #f28482;" onclick="eliminarTarea('${tarea.ID_Caso}')">Eliminar</button>
             </div>
           </div>
         `;
-      }).join('');
-      
-      updateStats();
+      }).join("");
     }
     
-    function addTask() {
-      const description = document.getElementById('description').value.trim();
-      const type = document.getElementById('type').value;
-      const status = document.getElementById('status').value;
-      const assignee = document.getElementById('assignee').value.trim();
-      const criticality = document.getElementById('criticality').value;
-      const followupDays = parseInt(document.getElementById('followupDays').value) || 2;
-      const notes = document.getElementById('notes').value.trim();
+    function actualizarStats() {
+      const total = tareas.length;
+      const enRevision = tareas.filter(t => t.Estado === "En revisión").length;
+      const pendiente = tareas.filter(t => ["Pendiente respuesta", "Documento solicitado"].includes(t.Estado)).length;
+      const completadas = tareas.filter(t => t.Estado === "Completado").length;
       
-      if (!description || !type || !status) {
-        showAlert('Completa descripción, tipo y estado', 'error');
-        return;
-      }
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statProgress").textContent = enRevision;
+      document.getElementById("statPending").textContent = pendiente;
+      document.getElementById("statDone").textContent = completadas;
       
-      tasks.push({
-        id: Date.now(),
-        description,
-        type,
-        status,
-        assignee,
-        criticality,
-        followupDays,
-        notes,
-        createdDate: new Date().toISOString()
-      });
+      const hoy = new Date();
+      const unaSemanasAtras = new Date(hoy.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const completadasSemana = tareas.filter(t => {
+        if (t.Estado !== "Completado" || !t.Fecha_Cierre) return false;
+        const fechaCierre = new Date(t.Fecha_Cierre);
+        return fechaCierre >= unaSemanasAtras && fechaCierre <= hoy;
+      }).length;
       
-      localStorage.setItem('legalTasks', JSON.stringify(tasks));
-      showAlert(`✓ Tarea "${description}" registrada`, 'success');
-      clearForm();
-      renderTasks();
-    }
-    
-    function updateTask(idx) {
-      const newStatus = prompt('Nuevo estado:', tasks[idx].status);
-      if (newStatus) {
-        tasks[idx].status = newStatus;
-        localStorage.setItem('legalTasks', JSON.stringify(tasks));
-        renderTasks();
+      document.getElementById("kpiSemanal").textContent = completadasSemana;
+      
+      const tareasCerradas = tareas.filter(t => t.Dias_Ciclo && t.Dias_Ciclo > 0);
+      if (tareasCerradas.length > 0) {
+        const promedio = (tareasCerradas.reduce((sum, t) => sum + t.Dias_Ciclo, 0) / tareasCerradas.length).toFixed(1);
+        document.getElementById("kpiPromedio").textContent = promedio;
       }
     }
     
-    function deleteTask(idx) {
-      if (confirm('¿Eliminar esta tarea?')) {
-        tasks.splice(idx, 1);
-        localStorage.setItem('legalTasks', JSON.stringify(tasks));
-        renderTasks();
+    function filtrarPor(filtro) {
+      filtroActual = filtro;
+      document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+      event.target.classList.add("active");
+      renderizarTareas();
+    }
+    
+    function limpiarForm() {
+      document.getElementById("description").value = "";
+      document.getElementById("solicitante").value = "";
+      document.getElementById("materia").value = "";
+      document.getElementById("estado").value = "";
+      document.getElementById("criticidad").value = "Normal";
+      document.getElementById("destinatario").value = "";
+      document.getElementById("seguimientoDias").value = "2";
+      document.getElementById("notas").value = "";
+      document.getElementById("fechaSLA").value = "";
+    }
+    
+    function cerrarModal() {
+      document.getElementById("editModal").classList.remove("active");
+    }
+    
+    async function eliminarTarea(idCaso) {
+      if (!confirm("¿Eliminar esta tarea?")) return;
+      
+      try {
+        mostrarSincronizacion(true);
+        
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "deleteTask",
+            id: idCaso
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          mostrarAlerta("✅ Tarea eliminada", "success");
+          cargarTareas();
+        }
+      } catch (err) {
+        mostrarAlerta(`❌ Error: ${err.message}`, "error");
+      } finally {
+        mostrarSincronizacion(false);
       }
     }
     
-    function clearForm() {
-      document.getElementById('description').value = '';
-      document.getElementById('type').value = '';
-      document.getElementById('status').value = '';
-      document.getElementById('assignee').value = '';
-      document.getElementById('criticality').value = 'normal';
-      document.getElementById('followupDays').value = '2';
-      document.getElementById('notes').value = '';
-    }
-    
-    function showAlert(message, type) {
-      const container = document.getElementById('alertContainer');
-      const alert = document.createElement('div');
-      alert.className = `alert ${type}`;
-      alert.textContent = message;
+    function mostrarAlerta(mensaje, tipo) {
+      const container = document.getElementById("alertContainer");
+      const alert = document.createElement("div");
+      alert.className = `alert ${tipo}`;
+      alert.textContent = mensaje;
       container.appendChild(alert);
       setTimeout(() => alert.remove(), 4000);
     }
     
-    renderTasks();
+    function mostrarSincronizacion(mostrar) {
+      document.getElementById("syncStatus").style.display = mostrar ? "block" : "none";
+    }
+    
+    window.addEventListener("load", cargarTareas);
+    setInterval(cargarTareas, 30000);
   </script>
 </body>
 </html>
